@@ -271,10 +271,14 @@ import IntentsUI
         self.send(status: CDVCommandStatus_OK, command: command)
     }
 
-    func sendStatusOk(_ command: CDVInvokedUrlCommand, codeMessage:String) {
+    func sendStatusOk(_ command: CDVInvokedUrlCommand, responseCode: ShortcutResponseCode, phrase: String) {
+        let responseMessages = ["code": responseCode.rawValue,
+                                "message" : responseCode.description,
+                                "phrase" : phrase]
+
         let pluginResult = CDVPluginResult(
             status: CDVCommandStatus_OK,
-            messageAs: codeMessage
+            messageAs: responseMessages
         )
         
         self.send(pluginResult: pluginResult!, command: command)
