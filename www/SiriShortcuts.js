@@ -24,7 +24,7 @@ exports.donate = function (options, success, error) {
  * @param {string} options.title Specify a title for the shortcut, which is visible to the user as the name of the shortcut
  * @param {string} options.suggestedInvocationPhrase Specify the phrase to give the user some inspiration on what the shortcut to call
  * @param {object} options.userInfo Provide a key-value object that contains information about the shortcut, this will be returned in the getActivatedShortcut method. It is not possible to use the persistentIdentifier key, it is used internally
- * @param {function() : void} success Function to call upon successful donation
+ * @param {function(data) : void} success Function to call upon successful donation
  * @param {function(error) : void} error Function to call upon unsuccessful donation, for example if the user has an iOS version < 12.0
  * @return void
  */
@@ -76,3 +76,14 @@ exports.getActivatedShortcut = function(options, success, error) {
 
     exec(success, error, 'SiriShortcuts', 'getActivatedShortcut', [options.clear]);
 };
+
+/**
+ * Get all persist identifier from the application
+ * @param {function(data) : void} success Function to call upon successful
+ * @param {function(error) : void} error  Function to call upon unsuccessful
+ * @return void
+ */
+/*exports.getAllPersistIdentifier = function(success, error) {
+    exec(success, error, 'SiriShortcuts', 'getAllPersistIdentifier');
+};
+*/
