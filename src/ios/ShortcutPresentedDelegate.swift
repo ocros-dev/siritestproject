@@ -16,18 +16,18 @@ class ShortcutPresentedDelegate: NSObject, INUIAddVoiceShortcutViewControllerDel
                                         error: Error?) {
         if let err = error as NSError? {
             debugPrint(err)
-            self.shortcuts.sendStatusError(self.command, error: ShortcutCodeEnum.internalError.rawValue)
+            self.shortcuts.sendStatusError(self.command, error: ShortcutResponseCode.internalError.rawValue)
             return
         }
 
-        self.shortcuts.sendStatusOk(self.command, codeMessage: ShortcutCodeEnum.created.rawValue)
+        self.shortcuts.sendStatusOk(self.command, codeMessage: ShortcutResponseCode.created.rawValue)
 
         controller.dismiss(animated: true)
     }
 
     @available(iOS 12.0, *)
     func addVoiceShortcutViewControllerDidCancel(_ controller: INUIAddVoiceShortcutViewController) {
-        self.shortcuts.sendStatusError(self.command, error: ShortcutCodeEnum.dismiss.rawValue)
+        self.shortcuts.sendStatusError(self.command, error: ShortcutResponseCode.dismiss.rawValue)
 
         controller.dismiss(animated: true)
     }

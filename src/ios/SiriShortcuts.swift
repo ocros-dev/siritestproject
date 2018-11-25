@@ -37,7 +37,7 @@ import IntentsUI
         self.commandDelegate!.run(inBackground: {
             if #available(iOS 12.0, *) {
                 guard let persistentIdentifier = command.arguments[0] as? String else {
-                    self.sendStatusError(command, ShortcutCodeEnum.noPersistentIdentifier.rawValue)
+                    self.sendStatusError(command, ShortcutResponseCode.noPersistentIdentifier.rawValue)
                     return
                 }
 
