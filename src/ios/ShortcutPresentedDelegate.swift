@@ -20,7 +20,7 @@ class ShortcutPresentedDelegate: NSObject, INUIAddVoiceShortcutViewControllerDel
             return
         }
 
-        self.shortcuts.sendStatusOk(self.command, codeMessage: ShortcutResponseCode.created, phrase: voiceShortcut?.invocationPhrase ?? "")
+        self.shortcuts.sendStatusOk(self.command, responseCode: ShortcutResponseCode.created, phrase: voiceShortcut?.invocationPhrase ?? "")
 
         controller.dismiss(animated: true)
     }
@@ -50,13 +50,13 @@ class ShortcutEditPresentedDelegate: NSObject, INUIEditVoiceShortcutViewControll
             return
         }
         
-        self.shortcuts.sendStatusOk(self.command, codeMessage: ShortcutResponseCode.modified, phrase: voiceShortcut?.invocationPhrase ?? "")
+        self.shortcuts.sendStatusOk(self.command, responseCode: ShortcutResponseCode.modified, phrase: voiceShortcut?.invocationPhrase ?? "")
         controller.dismiss(animated: true, completion: nil)
     }
     
     @available(iOS 12.0, *)
     func editVoiceShortcutViewController(_ controller: INUIEditVoiceShortcutViewController, didDeleteVoiceShortcutWithIdentifier deletedVoiceShortcutIdentifier: UUID) {
-        self.shortcuts.sendStatusOk(self.command, codeMessage: ShortcutResponseCode.deleted, phrase: "")
+        self.shortcuts.sendStatusOk(self.command, responseCode: ShortcutResponseCode.deleted, phrase: "")
         controller.dismiss(animated: true, completion: nil)
     }
     
