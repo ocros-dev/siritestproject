@@ -45,7 +45,7 @@ class ShortcutEditPresentedDelegate: NSObject, INUIEditVoiceShortcutViewControll
     @available(iOS 12.0, *)
     func editVoiceShortcutViewController(_ controller: INUIEditVoiceShortcutViewController, didUpdate voiceShortcut: INVoiceShortcut?, error: Error?) {
         if let err = error as NSError? {
-
+            debugPrint(err)
             self.shortcuts.sendStatusError(self.command, error: ShortcutResponseCode.internalError.rawValue)
             return
         }
