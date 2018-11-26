@@ -20,7 +20,11 @@ class ShortcutPresentedDelegate: NSObject, INUIAddVoiceShortcutViewControllerDel
             return
         }
 
-        self.shortcuts.sendStatusOk(self.command, responseCode: ShortcutResponseCode.created, phrase: voiceShortcut?.invocationPhrase ?? "")
+        let returnData = ["code": ShortcutResponseCode.created.rawValue,
+                                "message" : ShortcutResponseCode.created.description,
+                                "phrase" : voiceShortcut?.invocationPhrase ?? ""]
+
+        self.shortcuts.sendStatusOk(self.command, responseMessage: returnData)
 
         controller.dismiss(animated: true)
     }
@@ -50,13 +54,23 @@ class ShortcutEditPresentedDelegate: NSObject, INUIEditVoiceShortcutViewControll
             return
         }
         
-        self.shortcuts.sendStatusOk(self.command, responseCode: ShortcutResponseCode.modified, phrase: voiceShortcut?.invocationPhrase ?? "")
+        let returnData = ["code": ShortcutResponseCode.modified.rawValue,
+                                "message" : ShortcutResponseCode.modified.description,
+                                "phrase" : voiceShortcut?.invocationPhrase ?? ""]
+
+        self.shortcuts.sendStatusOk(self.command, responseMessage: returnData)
+
         controller.dismiss(animated: true, completion: nil)
     }
     
     @available(iOS 12.0, *)
     func editVoiceShortcutViewController(_ controller: INUIEditVoiceShortcutViewController, didDeleteVoiceShortcutWithIdentifier deletedVoiceShortcutIdentifier: UUID) {
-        self.shortcuts.sendStatusOk(self.command, responseCode: ShortcutResponseCode.deleted, phrase: "")
+        let returnData = ["code": ShortcutResponseCode.deleted.rawValue,
+                                "message" : ShortcutResponseCode.deleted.description,
+                                "phrase" : ""]
+
+        self.shortcuts.sendStatusOk(self.command, responseMessage: returnData)
+
         controller.dismiss(animated: true, completion: nil)
     }
     

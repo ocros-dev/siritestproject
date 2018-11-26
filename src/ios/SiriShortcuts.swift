@@ -144,17 +144,15 @@ import IntentsUI
                         "userInfo": userInfo,
                     ]
 
-                    let pluginResult = CDVPluginResult(
-                        status: CDVCommandStatus_OK,
-                        messageAs: returnData as [AnyHashable: Any]
-                    )
-
                     let clear = command.arguments[0] as? Bool ?? true
                     if clear {
                         appDelegate.userActivity = nil
                     }
-                    self.send(pluginResult: pluginResult!, command: command)
+                    
+                    self.sendStatusOk(command, responseMessage: returnData)
+                    return
                 }
+                self.sendStatusOk(command)
                 
             } else {
                 self.sendStatusError(command)
@@ -268,14 +266,11 @@ import IntentsUI
         self.send(status: CDVCommandStatus_OK, command: command)
     }
 
-    func sendStatusOk(_ command: CDVInvokedUrlCommand, responseCode: ShortcutResponseCode, phrase: String) {
-        let responseMessages = ["code": responseCode.rawValue,
-                                "message" : responseCode.description,
-                                "phrase" : phrase]
-
+    func sendStatusOk(_ command: CDVInvokedUrlCommand, responseMessage: [AnyHashable: Any]) {
+        
         let pluginResult = CDVPluginResult(
             status: CDVCommandStatus_OK,
-            messageAs: responseMessages
+            messageAs: responseMessage
         )
         
         self.send(pluginResult: pluginResult!, command: command)
