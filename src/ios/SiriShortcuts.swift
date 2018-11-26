@@ -130,9 +130,6 @@ import IntentsUI
 
         self.commandDelegate!.run(inBackground: {
             if #available(iOS 12.0, *) {
-                var pluginResult = CDVPluginResult(
-                    status: CDVCommandStatus_OK
-                )
 
                 if let userActivity = appDelegate.userActivity {
                     let title = userActivity.title
@@ -147,7 +144,7 @@ import IntentsUI
                         "userInfo": userInfo,
                     ]
 
-                    pluginResult = CDVPluginResult(
+                    let pluginResult = CDVPluginResult(
                         status: CDVCommandStatus_OK,
                         messageAs: returnData as [AnyHashable: Any]
                     )
@@ -156,9 +153,9 @@ import IntentsUI
                     if clear {
                         appDelegate.userActivity = nil
                     }
+                    self.send(pluginResult: pluginResult!, command: command)
                 }
-
-                self.send(pluginResult: pluginResult!, command: command)
+                
             } else {
                 self.sendStatusError(command)
             }
