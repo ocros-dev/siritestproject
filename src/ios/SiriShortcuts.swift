@@ -2,6 +2,7 @@ import Intents
 import IntentsUI
 
 @objc(SiriShortcuts) class SiriShortcuts : CDVPlugin {
+    @available(iOS 12.0, *)
     typealias GetVoiceShortcut = (INVoiceShortcut?) -> Void
 
     var activity: NSUserActivity?
@@ -235,6 +236,7 @@ import IntentsUI
     }
     */
 
+    @available(iOS 12.0, *)
     func getVoiceShortcut(persistentIdentifier: String, completion: @escaping GetVoiceShortcut) {
         var voiceShortcut:INVoiceShortcut?
         INVoiceShortcutCenter.shared.getAllVoiceShortcuts{ (voiceShortcutsFromCenter, error) in
@@ -259,7 +261,6 @@ import IntentsUI
             
              completion(voiceShortcut)
         }
-        
     }
 
     func sendStatusOk(_ command: CDVInvokedUrlCommand) {
