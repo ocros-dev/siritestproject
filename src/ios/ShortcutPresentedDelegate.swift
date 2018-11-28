@@ -31,7 +31,10 @@ class ShortcutPresentedDelegate: NSObject, INUIAddVoiceShortcutViewControllerDel
 
     @available(iOS 12.0, *)
     func addVoiceShortcutViewControllerDidCancel(_ controller: INUIAddVoiceShortcutViewController) {
-        self.shortcuts.sendStatusError(self.command, error: ShortcutResponseCode.dismiss.rawValue)
+        let returnData = ["code": ShortcutResponseCode.dismiss.rawValue,
+                          "message" : ShortcutResponseCode.dismiss.description,
+                          "phrase" : ""]
+        self.shortcuts.sendStatusOk(self.command, responseMessage: returnData)
 
         controller.dismiss(animated: true)
     }
@@ -76,7 +79,11 @@ class ShortcutEditPresentedDelegate: NSObject, INUIEditVoiceShortcutViewControll
     
     @available(iOS 12.0, *)
     func editVoiceShortcutViewControllerDidCancel(_ controller: INUIEditVoiceShortcutViewController) {
-        self.shortcuts.sendStatusError(self.command, error: ShortcutResponseCode.dismiss.rawValue)
+        let returnData = ["code": ShortcutResponseCode.dismiss.rawValue,
+                          "message" : ShortcutResponseCode.dismiss.description,
+                          "phrase" : ""]
+        self.shortcuts.sendStatusOk(self.command, responseMessage: returnData)
+        
         controller.dismiss(animated: true, completion: nil)
     }
     
