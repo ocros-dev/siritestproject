@@ -83,7 +83,6 @@ exports.getActivatedShortcut = function(options, success, error) {
  * @param {function(error) : void} error  Function to call upon unsuccessful
  * @return void
  */
-/*exports.getAllPersistIdentifier = function(success, error) {
-    exec(success, error, 'SiriShortcuts', 'getAllPersistIdentifier');
+exports.getAllPersistentIdentifier = function(success, error) {
+    exec(success, error, 'SiriShortcuts', 'getAllPersistentIdentifier');
 };
-*/

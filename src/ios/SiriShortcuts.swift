@@ -207,26 +207,28 @@ import IntentsUI
         }
     }
 
-    /*
-    @objc(getAllPersistIdentifier:) func getAllPersistIdentifier(_ command: CDVInvokedUrlCommand) {
+    @objc(getAllPersistentIdentifier:) func getAllPersistentIdentifier(_ command: CDVInvokedUrlCommand) {
         self.commandDelegate!.run(inBackground: {
             if #available(iOS 12.0, *) {
                 INVoiceShortcutCenter.shared.getAllVoiceShortcuts{ [unowned self] (voiceShortcutsFromCenter, error) in
                     if let voiceShortcutsFromCenter = voiceShortcutsFromCenter {
-                        var persistIdentifierList = [String]()
+                        var persistentIdentifierList = [String]()
                         for vShortcut in voiceShortcutsFromCenter{
                             if let act:NSUserActivity = vShortcut.shortcut.userActivity,
                                 let ui = act.userInfo, let pi = ui["persistentIdentifier"]{
-                                persistIdentifierList.append(pi as! String)
+                                persistentIdentifierList.append(pi as! String)
                             }
                         }
                         let pluginResult = CDVPluginResult(
                             status: CDVCommandStatus_OK,
-                            messageAs: persistIdentifierList
+                            messageAs: persistentIdentifierList
                         )
                         
                         self.send(pluginResult: pluginResult!, command: command)
+                        return
                     }
+
+                    self.sendStatusOk(command)
                 }
             }
             else {
@@ -234,7 +236,6 @@ import IntentsUI
             }
         })
     }
-    */
 
     @available(iOS 12.0, *)
     func getVoiceShortcut(persistentIdentifier: String, completion: @escaping GetVoiceShortcut) {
