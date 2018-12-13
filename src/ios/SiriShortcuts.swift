@@ -212,11 +212,16 @@ import IntentsUI
             if #available(iOS 12.0, *) {
                 INVoiceShortcutCenter.shared.getAllVoiceShortcuts{ [unowned self] (voiceShortcutsFromCenter, error) in
                     if let voiceShortcutsFromCenter = voiceShortcutsFromCenter {
-                        var persistentIdentifierList = [String]()
+                        var persistentIdentifierList = [[AnyHashable: Any]]()
                         for vShortcut in voiceShortcutsFromCenter{
                             if let act:NSUserActivity = vShortcut.shortcut.userActivity,
                                 let ui = act.userInfo, let pi = ui["persistentIdentifier"]{
-                                persistentIdentifierList.append(pi as! String)
+                                let piData = [
+                                    "persistentIdentifier": pi as! String,
+                                    "invocationPhrase": vShortcut.invocationPhrase,
+                                    ]
+                                persistentIdentifierList.append(piData)
+                                
                             }
                         }
                         let pluginResult = CDVPluginResult(
