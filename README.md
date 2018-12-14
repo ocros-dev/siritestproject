@@ -32,6 +32,9 @@ This requires Cordova 6.0+
 <dt><a href="#getActivatedShortcut">getActivatedShortcut(success, error)</a> ⇒</dt>
 <dd><p>Get the current clicked user activity, and return <code>null</code> if none</p>
 </dd>
+<dt><a href="#getAll">getAll(success, error)</a> ⇒</dt>
+<dd><p>Get all shortcuts from the application</p>
+</dd>
 </dl>
 
 <a name="donate"></a>
@@ -115,4 +118,15 @@ Get the current clicked user activity, and return `null` if none
 | success | <code>function</code> | Function to call upon succesful fetch. Data returns either `null` when there is no activated shortcut, or a key-value object containing: ` { persistentIdentifier: string; title: string; userInfo: object; }` |
 | error | <code>function</code> | Function to call upon unsuccessful removal |
 
+<a name="getAll"></a>
 
+## getAll(success, error) ⇒
+Get all shortcuts from the application
+
+**Kind**: global function  
+**Returns**: void  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| success | <code>function</code> | Function to call upon successful. Data returns an array of key-value object containing: ` { persistentIdentifier: string; invocationPhrase: string; }` |
+| error | <code>function</code> | Function to call upon unsuccessful |
