@@ -207,7 +207,7 @@ import IntentsUI
         }
     }
 
-    @objc(getAllPersistentIdentifier:) func getAllPersistentIdentifier(_ command: CDVInvokedUrlCommand) {
+    @objc(getAll:) func getAll(_ command: CDVInvokedUrlCommand) {
         self.commandDelegate!.run(inBackground: {
             if #available(iOS 12.0, *) {
                 INVoiceShortcutCenter.shared.getAllVoiceShortcuts{ [unowned self] (voiceShortcutsFromCenter, error) in

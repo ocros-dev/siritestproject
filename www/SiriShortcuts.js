@@ -78,11 +78,11 @@ exports.getActivatedShortcut = function(options, success, error) {
 };
 
 /**
- * Get all persist identifier from the application
+ * Get all shortcuts from the application
  * @param {function(data) : void} success Function to call upon successful
  * @param {function(error) : void} error  Function to call upon unsuccessful
  * @return void
  */
-exports.getAllPersistentIdentifier = function(success, error) {
-    exec(success, error, 'SiriShortcuts', 'getAllPersistentIdentifier');
+exports.getAll = function(success, error) {
+    exec(success, error, 'SiriShortcuts', 'getAll');
 };
