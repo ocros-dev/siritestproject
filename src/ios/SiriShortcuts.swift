@@ -125,7 +125,7 @@ import IntentsUI
             }
         })
     }
-
+    /*
     @objc(getActivatedShortcut:) func getActivatedShortcut(_ command: CDVInvokedUrlCommand) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
 
@@ -160,6 +160,7 @@ import IntentsUI
             }
         })
     }
+    */
 
     func createUserActivity(from command: CDVInvokedUrlCommand, makeActive: Bool) -> NSUserActivity? {
         if #available(iOS 12.0, *) {
