@@ -12,7 +12,7 @@ static void * UserActivityPropertyKey = &UserActivityPropertyKey;
 - (void)setUserActivity:(NSUserActivity *)activity {
     objc_setAssociatedObject(self, UserActivityPropertyKey, activity, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
-/*
+
 - (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void (^)(NSArray *))restorationHandler {
@@ -26,6 +26,5 @@ continueUserActivity:(NSUserActivity *)userActivity
 
     return NO;
 }
-*/
 
 @end
