@@ -1,4 +1,4 @@
-#import "AppDelegate+SiriShortcuts.h"
+/*#import "AppDelegate+SiriShortcuts.h"
 #import <objc/runtime.h>
 
 static void * UserActivityPropertyKey = &UserActivityPropertyKey;
@@ -29,3 +29,4 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 @end
 
+*/
