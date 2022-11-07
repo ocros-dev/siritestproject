@@ -21,7 +21,7 @@ This requires Cordova 6.0+
 <dd><p>Donate shortcut to Siri</p>
 </dd>
 <dt><a href="#present">present(options, success, error)</a> ⇒</dt>
-<dd><p>Present shortcut to the user, will popup a view controller asking the user to add it to Siri</p>
+<dd><p>Present shortcut to the user, will popup a view controller asking the user to add it to Siri. If the shortcut exists, will popup a view controller asking the user to modify or delete it.</p>
 </dd>
 <dt><a href="#remove">remove(persistentIdentifiers, success, error)</a> ⇒</dt>
 <dd><p>Remove shortcuts based on identifiers</p>
@@ -31,6 +31,9 @@ This requires Cordova 6.0+
 </dd>
 <dt><a href="#getActivatedShortcut">getActivatedShortcut(success, error)</a> ⇒</dt>
 <dd><p>Get the current clicked user activity, and return <code>null</code> if none</p>
+</dd>
+<dt><a href="#getAll">getAll(success, error)</a> ⇒</dt>
+<dd><p>Get all shortcuts from the application</p>
 </dd>
 </dl>
 
@@ -57,7 +60,8 @@ Donate shortcut to Siri
 <a name="present"></a>
 
 ## present(options, success, error) ⇒
-Present shortcut to the user, will popup a view controller asking the user to add it to Siri
+Present shortcut to the user, will popup a view controller asking the user to add it to Siri.
+If the shortcut exists, will popup a view controller asking the user to modify or delete it.
 
 **Kind**: global function  
 **Returns**: void  
@@ -69,8 +73,8 @@ Present shortcut to the user, will popup a view controller asking the user to ad
 | options.title | <code>string</code> | Specify a title for the shortcut, which is visible to the user as the name of the shortcut |
 | options.suggestedInvocationPhrase | <code>string</code> | Specify the phrase to give the user some inspiration on what the shortcut to call |
 | options.userInfo | <code>object</code> | Provide a key-value object that contains information about the shortcut, this will be returned in the getActivatedShortcut method. It is not possible to use the persistentIdentifier key, it is used internally |
-| success | <code>function</code> | Function to call upon successful donation |
-| error | <code>function</code> | Function to call upon unsuccessful donation, for example if the user has an iOS version < 12.0 |
+| success | <code>function</code> | Function to call upon successful donation. Data returns a key-value object containing: ` { code: string; message: string; phrase: string; }`. The `code` and `message` values are: <ul><li>"1" --> "Siri shortcut created."</li><li>"2" --> "Siri shortcut modified."</li><li>"3" --> "Siri shortcut deleted."</li><li>"4" --> "Siri shortcut dismissed."</li><li>"5" --> "Internal error occured."</li><li>"6" --> "Error while performing shortcut operation, user might not run iOS 12."</li><li>"7" --> "Error while performing shortcut operation, no persistent identifier sent." </li></ul> |
+| error | <code>function</code> | Function to call upon unsuccessful donation, for example if the user has an iOS version < 12.0 or if is not sended persistentIdentifier |
 
 <a name="remove"></a>
 
@@ -114,4 +118,15 @@ Get the current clicked user activity, and return `null` if none
 | success | <code>function</code> | Function to call upon succesful fetch. Data returns either `null` when there is no activated shortcut, or a key-value object containing: ` { persistentIdentifier: string; title: string; userInfo: object; }` |
 | error | <code>function</code> | Function to call upon unsuccessful removal |
 
+<a name="getAll"></a>
 
+## getAll(success, error) ⇒
+Get all shortcuts from the application
+
+**Kind**: global function  
+**Returns**: void  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| success | <code>function</code> | Function to call upon successful. Data returns an array of key-value object containing: ` { persistentIdentifier: string; invocationPhrase: string; }` |
+| error | <code>function</code> | Function to call upon unsuccessful |

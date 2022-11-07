@@ -2,8 +2,12 @@ import Intents
 import IntentsUI
 
 @objc(SiriShortcuts) class SiriShortcuts : CDVPlugin {
+    @available(iOS 12.0, *)
+    typealias GetVoiceShortcut = (INVoiceShortcut?) -> Void
+
     var activity: NSUserActivity?
     var shortcutPresentedDelegate: ShortcutPresentedDelegate?
+    var shortcutEditPresentedDelegate: ShortcutEditPresentedDelegate?
 
     public static func getActivityName() -> String? {
         guard let identifier = Bundle.main.bundleIdentifier else { return nil }
@@ -33,32 +37,60 @@ import IntentsUI
     @objc(present:) func present(_ command: CDVInvokedUrlCommand) {
         self.commandDelegate!.run(inBackground: {
             if #available(iOS 12.0, *) {
-                self.activity = self.createUserActivity(from: command, makeActive: false)
-
-                if self.activity != nil {
-                    self.shortcutPresentedDelegate = ShortcutPresentedDelegate(command: command, shortcuts: self)
-
-                    let shortcut = INShortcut(userActivity: self.activity!)
-                    let viewController = INUIAddVoiceShortcutViewController(shortcut: shortcut)
-                    viewController.delegate = self.shortcutPresentedDelegate!
-
-                    DispatchQueue.main.async {
-                        self.viewController?.present(viewController, animated: true, completion: nil)
-                    }
-
-                    // tell Cordova we're all OK
-                    self.sendStatusOk(command)
-
+                guard let persistentIdentifier = command.arguments[0] as? String else {
+                    self.sendStatusError(command, error: ShortcutResponseCode.noPersistentIdentifier.rawValue)
                     return
                 }
 
-                self.sendStatusError(command)
-
-                return
+                self.getVoiceShortcut( persistentIdentifier: persistentIdentifier, completion: {[unowned self] inVoiceShortcut in
+                        if let inVS = inVoiceShortcut{
+                            
+                            self.shortcutEditPresentedDelegate = ShortcutEditPresentedDelegate(command: command, shortcuts: self)
+                            
+                            let viewController = INUIEditVoiceShortcutViewController(voiceShortcut: inVS)
+                            viewController.delegate = self.shortcutEditPresentedDelegate!
+                            
+                            DispatchQueue.main.async {
+                                self.viewController?.present(viewController, animated: true, completion: nil)
+                            }
+                            
+                            return
+                            
+                        }
+                        else{
+                            self.activity = self.createUserActivity(from: command, makeActive: false)
+                            
+                            if self.activity != nil {
+                                self.shortcutPresentedDelegate = ShortcutPresentedDelegate(command: command, shortcuts: self)
+                                
+                                let shortcut = INShortcut(userActivity: self.activity!)
+                                
+                                let viewController = INUIAddVoiceShortcutViewController(shortcut: shortcut)
+                                viewController.delegate = self.shortcutPresentedDelegate!
+                                
+                                DispatchQueue.main.async {
+                                    self.viewController?.present(viewController, animated: true, completion: nil)
+                                }
+                                
+                                // tell Cordova we're all OK
+                                //self.sendStatusOk(command)
+                                
+                                return
+                            }
+                            
+                            self.sendStatusError(command)
+                            
+                            return
+                        }
+                    
+                    }
+                )
             }
-
-            // shortcut not donated
-            self.sendStatusError(command)
+            else{
+                // shortcut not donated
+                self.sendStatusError(command)
+            }
+            
         })
     }
 
@@ -93,15 +125,12 @@ import IntentsUI
             }
         })
     }
-
+    /*
     @objc(getActivatedShortcut:) func getActivatedShortcut(_ command: CDVInvokedUrlCommand) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
 
         self.commandDelegate!.run(inBackground: {
             if #available(iOS 12.0, *) {
-                var pluginResult = CDVPluginResult(
-                    status: CDVCommandStatus_OK
-                )
 
                 if let userActivity = appDelegate.userActivity {
                     let title = userActivity.title
@@ -116,23 +145,22 @@ import IntentsUI
                         "userInfo": userInfo,
                     ]
 
-                    pluginResult = CDVPluginResult(
-                        status: CDVCommandStatus_OK,
-                        messageAs: returnData as [AnyHashable: Any]
-                    )
-
                     let clear = command.arguments[0] as? Bool ?? true
                     if clear {
                         appDelegate.userActivity = nil
                     }
+                    
+                    self.sendStatusOk(command, responseMessage: returnData)
+                    return
                 }
-
-                self.send(pluginResult: pluginResult!, command: command)
+                self.sendStatusOk(command)
+                
             } else {
                 self.sendStatusError(command)
             }
         })
     }
+    */
 
     func createUserActivity(from command: CDVInvokedUrlCommand, makeActive: Bool) -> NSUserActivity? {
         if #available(iOS 12.0, *) {
@@ -180,15 +208,87 @@ import IntentsUI
         }
     }
 
+    @objc(getAll:) func getAll(_ command: CDVInvokedUrlCommand) {
+        self.commandDelegate!.run(inBackground: {
+            if #available(iOS 12.0, *) {
+                INVoiceShortcutCenter.shared.getAllVoiceShortcuts{ [unowned self] (voiceShortcutsFromCenter, error) in
+                    if let voiceShortcutsFromCenter = voiceShortcutsFromCenter {
+                        var persistentIdentifierList = [[AnyHashable: Any]]()
+                        for vShortcut in voiceShortcutsFromCenter{
+                            if let act:NSUserActivity = vShortcut.shortcut.userActivity,
+                                let ui = act.userInfo, let pi = ui["persistentIdentifier"]{
+                                let piData = [
+                                    "persistentIdentifier": pi as! String,
+                                    "invocationPhrase": vShortcut.invocationPhrase,
+                                    ]
+                                persistentIdentifierList.append(piData)
+                                
+                            }
+                        }
+                        let pluginResult = CDVPluginResult(
+                            status: CDVCommandStatus_OK,
+                            messageAs: persistentIdentifierList
+                        )
+                        
+                        self.send(pluginResult: pluginResult!, command: command)
+                        return
+                    }
+
+                    self.sendStatusOk(command)
+                }
+            }
+            else {
+                self.sendStatusError(command)
+            }
+        })
+    }
+
+    @available(iOS 12.0, *)
+    func getVoiceShortcut(persistentIdentifier: String, completion: @escaping GetVoiceShortcut) {
+        var voiceShortcut:INVoiceShortcut?
+        INVoiceShortcutCenter.shared.getAllVoiceShortcuts{ (voiceShortcutsFromCenter, error) in
+            if let voiceShortcutsFromCenter = voiceShortcutsFromCenter {
+                for vShortcut in voiceShortcutsFromCenter{
+                    if let act:NSUserActivity = vShortcut.shortcut.userActivity,
+                        let ui = act.userInfo, let pi = ui["persistentIdentifier"]{
+                        debugPrint(pi as! String)
+                        if persistentIdentifier == pi as! String{
+                            voiceShortcut = vShortcut
+                            debugPrint(voiceShortcutsFromCenter)
+                            break
+                        }
+                    }
+                }
+                
+            } else {
+                if let error = error as NSError? {
+                    debugPrint("Failed to fetch voice shortcuts with error: \(error.localizedDescription)")
+                }
+            }
+            
+             completion(voiceShortcut)
+        }
+    }
+
     func sendStatusOk(_ command: CDVInvokedUrlCommand) {
         self.send(status: CDVCommandStatus_OK, command: command)
+    }
+
+    func sendStatusOk(_ command: CDVInvokedUrlCommand, responseMessage: [AnyHashable: Any]) {
+        
+        let pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_OK,
+            messageAs: responseMessage
+        )
+        
+        self.send(pluginResult: pluginResult!, command: command)
     }
 
     func sendStatusError(_ command: CDVInvokedUrlCommand, error: String? = nil) {
         var message = error
 
         if message == nil {
-            message = "Error while performing shortcut operation, user might not run iOS 12."
+            message = ShortcutResponseCode.noIos12.rawValue
         }
 
         let pluginResult = CDVPluginResult(
